@@ -7,8 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2347EFEB23048217004D0BF6 /* String+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2347EFEA23048217004D0BF6 /* String+Helpers.swift */; };
 		2353AC4922F9F888006003E2 /* Stories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2353AC4822F9F888006003E2 /* Stories.swift */; };
 		2353AC4B22FA2EC2006003E2 /* PrettyMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2353AC4A22FA2EC2006003E2 /* PrettyMaker.swift */; };
+		2384EB8A22FD2E280038F1B3 /* ProbabilityGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2384EB8922FD2E280038F1B3 /* ProbabilityGraph.swift */; };
+		2384EB8C22FD31610038F1B3 /* FakeMarkovChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2384EB8B22FD31610038F1B3 /* FakeMarkovChain.swift */; };
+		23DC4B652303243300674421 /* Probability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23DC4B642303243300674421 /* Probability.swift */; };
 		23F7135B22F74C750070ABD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F7135A22F74C750070ABD0 /* AppDelegate.swift */; };
 		23F7135D22F74C750070ABD0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F7135C22F74C750070ABD0 /* ViewController.swift */; };
 		23F7136022F74C750070ABD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 23F7135E22F74C750070ABD0 /* Main.storyboard */; };
@@ -30,8 +34,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2347EFEA23048217004D0BF6 /* String+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Helpers.swift"; sourceTree = "<group>"; };
 		2353AC4822F9F888006003E2 /* Stories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stories.swift; sourceTree = "<group>"; };
 		2353AC4A22FA2EC2006003E2 /* PrettyMaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrettyMaker.swift; sourceTree = "<group>"; };
+		2384EB8922FD2E280038F1B3 /* ProbabilityGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProbabilityGraph.swift; sourceTree = "<group>"; };
+		2384EB8B22FD31610038F1B3 /* FakeMarkovChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeMarkovChain.swift; sourceTree = "<group>"; };
+		23DC4B642303243300674421 /* Probability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Probability.swift; sourceTree = "<group>"; };
 		23F7135722F74C750070ABD0 /* ProbabilityTree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProbabilityTree.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23F7135A22F74C750070ABD0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23F7135C22F74C750070ABD0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -111,7 +119,11 @@
 			isa = PBXGroup;
 			children = (
 				23F7137E22F74C9E0070ABD0 /* ProbabilityTree.swift */,
+				2384EB8922FD2E280038F1B3 /* ProbabilityGraph.swift */,
 				2353AC4A22FA2EC2006003E2 /* PrettyMaker.swift */,
+				2384EB8B22FD31610038F1B3 /* FakeMarkovChain.swift */,
+				23DC4B642303243300674421 /* Probability.swift */,
+				2347EFEA23048217004D0BF6 /* String+Helpers.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -219,10 +231,14 @@
 			files = (
 				23F7135D22F74C750070ABD0 /* ViewController.swift in Sources */,
 				23F7137F22F74C9E0070ABD0 /* ProbabilityTree.swift in Sources */,
+				2347EFEB23048217004D0BF6 /* String+Helpers.swift in Sources */,
+				2384EB8C22FD31610038F1B3 /* FakeMarkovChain.swift in Sources */,
 				2353AC4B22FA2EC2006003E2 /* PrettyMaker.swift in Sources */,
 				23F7136322F74C750070ABD0 /* ProbabilityTree.xcdatamodeld in Sources */,
 				2353AC4922F9F888006003E2 /* Stories.swift in Sources */,
 				23F7135B22F74C750070ABD0 /* AppDelegate.swift in Sources */,
+				2384EB8A22FD2E280038F1B3 /* ProbabilityGraph.swift in Sources */,
+				23DC4B652303243300674421 /* Probability.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

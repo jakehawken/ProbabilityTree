@@ -4,38 +4,21 @@
 
 import Foundation
 
-public class ProbabilityTree {
+public class ProbabilityTree: FakeMarkovChain {
     private let rootNode = Node(word: "", parent: nil)
-    private var incidenceOfPeriod: UInt = 0
-    private var incidenceOfQuestionMark: UInt = 0
-    private var incidenceOfExclamation: UInt = 0
+    private var terminatorIncidences = TerminatorIncidences()
     
     func add(wordSequence words: [String]) {
         var currentNode = rootNode
         for word in words {
             currentNode = currentNode.insert(newWord: word)
-            if currentNode.word.isTerminalWord {
-                if let terminator = word.sentenceTerminator {
-                    if terminator == "." {
-                        incidenceOfPeriod += 1
-                    }
-                    else if terminator == "?" {
-                        incidenceOfQuestionMark += 1
-                    }
-                    else if terminator == "!" {
-                        incidenceOfExclamation += 1
-                    }
-                }
-                currentNode = rootNode
-            }
+            terminatorIncidences.updateIfNecessaryWith(word: word)
         }
     }
     
     func reset() {
         rootNode.reset()
-        incidenceOfPeriod = 0
-        incidenceOfQuestionMark = 0
-        incidenceOfExclamation = 0
+        terminatorIncidences = TerminatorIncidences()
     }
     
     func generateSentence() -> String {
@@ -51,32 +34,17 @@ public class ProbabilityTree {
         }
         var last = words.removeLast()
         if !last.isTerminalWord {
-            last += sentenceTerminator()
+            last += terminatorIncidences.weightedRandomTerminator()
         }
         words.append(last)
         let output = words.joined(separator: " ")
         mainthreadPrint("\(Stories.Lovecraft.callOfCthulhu.contains(output))")
         return output
     }
-    
-    private func sentenceTerminator() -> String {
-        let totalIncidence = Float(incidenceOfPeriod + incidenceOfQuestionMark + incidenceOfExclamation)
-        var likelihoodMapping: [(terminator: String, likelihood: Float)] = [
-            (".", Float(incidenceOfPeriod)/totalIncidence),
-            ("?", Float(incidenceOfQuestionMark)/totalIncidence),
-            ("!", Float(incidenceOfExclamation)/totalIncidence)
-        ]
-        likelihoodMapping.sort { $0.likelihood < $1.likelihood }
-        let random = Float.random(in: 0..<likelihoodMapping.last!.likelihood)
-        if let terminator = likelihoodMapping.first(where: { random < $0.likelihood })?.terminator {
-            return terminator
-        }
-        return "."
-    }
 }
 
 extension ProbabilityTree {
-    class Node {
+    class Node: WeightedNode {
         let word: String
         let parent: Node?
         private(set) var incidence: UInt = 1
@@ -122,40 +90,7 @@ extension ProbabilityTree {
             guard !word.isTerminalWord else {
                 return nil
             }
-            guard !children.isEmpty else {
-                return nil
-            }
-            if children.count == 1, let only = children.first {
-                return only
-            }
-            
-            let sortedByIncidence = children.sorted { $0.incidence < $1.incidence }
-            guard let maximumIncidence = sortedByIncidence.last?.incidence else {
-                return nil
-            }
-            
-            let totalIncidence = children.reduce(Float(0)) { $0 + Float($1.incidence) }
-            let maxLikelihood = Float(maximumIncidence) / totalIncidence
-            
-            let randomValue = Float.random(in: 0...maxLikelihood)
-            
-            var likelihood: Float = 0
-            let nodeForRandomValue: Node? = sortedByIncidence.first { (node) -> Bool in
-                let overallLikelihood = Float(node.incidence) / totalIncidence
-                likelihood += overallLikelihood
-//                logLikelihoodState(overall: overallLikelihood, cumulative: likelihood)
-                return randomValue <= likelihood
-            }
-            
-            if let nextNode = nodeForRandomValue {
-//                logSelectedWordState(totalIncidence: totalIncidence,
-//                                     maximumIncidence: maximumIncidence,
-//                                     maxLikelihood: maxLikelihood,
-//                                     randomValue: randomValue,
-//                                     likelihood: likelihood)
-                return nextNode
-            }
-            return sortedByIncidence.last
+            return children.weightedRandomNode()
         }
         
         private var root: Node {
@@ -172,7 +107,7 @@ extension ProbabilityTree {
     }
 }
 
-extension ProbabilityTree.Node: Hashable, CustomStringConvertible {
+extension ProbabilityTree.Node: HashableWeightedNode, CustomStringConvertible {
     static func == (lhs: ProbabilityTree.Node, rhs: ProbabilityTree.Node) -> Bool {
         return lhs.word == rhs.word
     }
@@ -189,45 +124,6 @@ extension ProbabilityTree.Node: Hashable, CustomStringConvertible {
 private extension Set where Element == ProbabilityTree.Node {
     func contains(word: String) -> Bool {
         return map { $0.word }.contains(word)
-    }
-}
-
-private extension String {
-    func capitalizingFirstLetter() -> String {
-        return prefix(1).capitalized + dropFirst()
-    }
-    
-    mutating func capitalizeFirstLetter() {
-        self = self.capitalizingFirstLetter()
-    }
-    
-    var sentenceTerminator: String? {
-        if hasSuffix("?") || hasSuffix("? ") || hasSuffix("?  ") {
-            return "?"
-        }
-        else if hasSuffix(".") || hasSuffix(". ") || hasSuffix(".  ") {
-            return "."
-        }
-        else if hasSuffix("!") || hasSuffix("! ") || hasSuffix("!  ") {
-            return "!"
-        }
-        else {
-            return nil
-        }
-    }
-    
-    var hasSentenceTerminator: Bool {
-        return sentenceTerminator != nil
-    }
-    
-    var isTerminalWord: Bool {
-        let terminator = sentenceTerminator
-        let isTerminated = terminator != nil
-        var isAnInitial = false
-        if let term = terminator, let first = components(separatedBy: term).first {
-            isAnInitial = first.count == 1
-        }
-        return isTerminated && !isAnInitial
     }
 }
 
@@ -259,28 +155,5 @@ private extension ProbabilityTree.Node {
             childDict[$0.word] = $0.dictionary()
         }
         return [word: childDict]
-    }
-    
-    func logLikelihoodState(overall: Float, cumulative: Float) {
-        mainthreadPrint("""
-            Overall Likelihood:    \(overall),
-            Cumulative likelihood: \(cumulative)
-            """)
-    }
-    
-    func logSelectedWordState(totalIncidence: Float, maximumIncidence: UInt, maxLikelihood: Float, randomValue: Float, likelihood: Float) {
-        mainthreadPrint("""
-            TOTAL: \(totalIncidence)
-            MAX INCIDENCE: \(maximumIncidence)
-            MAX LIKELIHOOD: \(maxLikelihood)
-            RANDOM: \(randomValue)
-            Winning Likelihood: \(likelihood)
-            """)
-    }
-}
-
-private func mainthreadPrint(_ message: String) {
-    DispatchQueue.main.sync {
-        print(message)
     }
 }

@@ -9,7 +9,7 @@ class ViewController: UIViewController {
     @IBOutlet private weak var mainButton: UIButton!
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
     
-    private let tree = ProbabilityTree()
+    private let graph = ProbabilityGraph()
     private let queue = DispatchQueue(label: "ProbabilityTree")
     
     override func viewDidLoad() {
@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     @IBAction private func mainButtonPressed(_ sender: Any) {
         var sentence: String?
         asyncWithLoader(asyncBlock: { [weak self] in
-            sentence = self?.tree.generateSentence()
+            sentence = self?.graph.generateSentence()
         }, completionBlock: { [weak self] in
             self?.mainLabel.text = sentence
             print(sentence!)
@@ -34,11 +34,11 @@ class ViewController: UIViewController {
     private func trainTree() {
         mainButton.isEnabled = false
         asyncWithLoader(asyncBlock: { [weak self] in
-            self?.tree.add(wordSequence: Stories.Lovecraft.callOfCthulhu)
+            self?.graph.add(wordSequence: Stories.Lovecraft.callOfCthulhu)
         }, completionBlock: { [weak self] in
             self?.mainLabel.text = "<< tree trained. >>"
             self?.mainButton.isEnabled = true
-            self?.tree.logTopTiers()
+            self?.graph.logAllNodes()
         })
     }
     
